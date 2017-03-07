@@ -2,6 +2,7 @@ package com.cesecsh.statusframelayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -202,15 +204,28 @@ public class StatusFrameLayout extends FrameLayout {
 
     // inflate ViewStub
 
+    /**
+     * 将加载中的布局加载到对应的viewStub中，并且初始化dialog
+     * 后续应该将imageView资源id设置成loading_images,以便循环播放
+     */
     private void inflateLoadingLayoutContainer() {
+        if (mLoadingLayoutContainer != null)
+            removeView(mLoadingLayoutContainer);
         ViewStub viewStub = (ViewStub) findViewById(R.id.viewStub_progress);
         viewStub.inflate();
         mLoadingLayoutContainer = (FrameLayout) findViewById(R.id.status_progress);
-        LayoutInflater.from(mContext).inflate(loadingID, mLoadingLayoutContainer);
+        View inflate = LayoutInflater.from(mContext).inflate(loadingID, mLoadingLayoutContainer);
+        ImageView imageView = (ImageView) inflate.findViewById(R.id.loading_images);
+        if (imageView != null) {
+            AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getBackground();
+            animationDrawable.start();
+        }
         mLoadingLayoutContainer.setVisibility(View.VISIBLE);
     }
 
     private void inflateEmptyLayoutContainer() {
+        if (mEmptyLayoutContainer != null)
+            removeView(mEmptyLayoutContainer);
         ViewStub viewStub = (ViewStub) findViewById(R.id.viewStub_empty);
         viewStub.inflate();
         mEmptyLayoutContainer = (FrameLayout) findViewById(R.id.status_empty);
@@ -220,6 +235,8 @@ public class StatusFrameLayout extends FrameLayout {
     }
 
     private void inflateErrorLayoutContainer() {
+        if (mErrorLayoutContainer != null)
+            removeView(mErrorLayoutContainer);
         ViewStub viewStub = (ViewStub) findViewById(R.id.viewStub_error);
         viewStub.inflate();
         mErrorLayoutContainer = (FrameLayout) findViewById(R.id.status_error);
@@ -228,21 +245,9 @@ public class StatusFrameLayout extends FrameLayout {
         setRetry(mErrorLayoutContainer, retryID);
     }
 
-    private void setRetry(FrameLayout mErrorLayoutContainer, int retryID) {
-        if (retryID == -1) {
-            throw new RetryIdNullException("retry id is null");
-        }
-        View view = mErrorLayoutContainer.findViewById(retryID);
-        view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null)
-                    mListener.onRetry();
-            }
-        });
-    }
-
     private void inflateNetErrorLayoutContainer() {
+        if (mNetErrorLayoutContainer != null)
+            removeView(mNetErrorLayoutContainer);
         ViewStub viewStub = (ViewStub) findViewById(R.id.viewStub_net_error);
         viewStub.inflate();
         mNetErrorLayoutContainer = (FrameLayout) findViewById(R.id.status_net_error);
@@ -259,6 +264,20 @@ public class StatusFrameLayout extends FrameLayout {
         }
         mLoadingLayoutContainer.removeAllViewsInLayout();
         LayoutInflater.from(mContext).inflate(layoutResId, mLoadingLayoutContainer);
+    }
+
+    private void setRetry(FrameLayout mErrorLayoutContainer, int retryID) {
+        if (retryID == -1) {
+            throw new RetryIdNullException("retry id is null");
+        }
+        View view = mErrorLayoutContainer.findViewById(retryID);
+        view.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null)
+                    mListener.onRetry();
+            }
+        });
     }
 
     public void setLoadingLayout(View layoutView) {

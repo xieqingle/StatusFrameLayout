@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <declare-styleable name="LoadingView">
-        <attr name="lv_external_radius" format="dimension" />
-        <attr name="lv_internal_radius" format="dimension" />
-        <attr name="lv_duration" format="integer" />
-        <attr name="lv_start_color" format="color" />
-        <attr name="lv_end_color" format="color" />
-    </declare-styleable>
-
     <declare-styleable name="StatusFrameLayout">
         <attr name="loadingLayout" format="reference" />
         <attr name="contentLayout" format="reference" />
@@ -17,11 +8,11 @@
         <attr name="netErrorLayout" format="reference" />
         <attr name="retryId" format="reference" />
         <attr name="currentStatus">
-            <flag name="loading" value="0x1000" />
-            <flag name="success" value="0x2000" />
-            <flag name="error" value="0x3000" />
-            <flag name="netError" value="0x4000" />
-            <flag name="empty" value="0x5000" />
+            <enum name="loading" value="0x1000" />
+            <enum name="success" value="0x2000" />
+            <enum name="error" value="0x3000" />
+            <enum name="netError" value="0x4000" />
+            <enum name="empty" value="0x5000" />
         </attr>
     </declare-styleable>
 </resources>
